@@ -1,31 +1,35 @@
 {
   "format": 1,
   "restore": {
-    "C:\\_Github\\Dotnet\\cryptowatcherAI\\cryptowatcherAI.csproj": {}
+    "/Users/sebastien/DotnetProjects/CryptowatcherAI/cryptowatcherAI.csproj": {}
   },
   "projects": {
-    "C:\\_Github\\Dotnet\\cryptowatcherAI\\cryptowatcherAI.csproj": {
+    "/Users/sebastien/DotnetProjects/CryptowatcherAI/cryptowatcherAI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\_Github\\Dotnet\\cryptowatcherAI\\cryptowatcherAI.csproj",
+        "projectUniqueName": "/Users/sebastien/DotnetProjects/CryptowatcherAI/cryptowatcherAI.csproj",
         "projectName": "cryptowatcherAI",
-        "projectPath": "C:\\_Github\\Dotnet\\cryptowatcherAI\\cryptowatcherAI.csproj",
-        "packagesPath": "C:\\Users\\sdubos\\.nuget\\packages\\",
-        "outputPath": "C:\\_Github\\Dotnet\\cryptowatcherAI\\obj\\",
+        "projectPath": "/Users/sebastien/DotnetProjects/CryptowatcherAI/cryptowatcherAI.csproj",
+        "packagesPath": "/Users/sebastien/.nuget/packages/",
+        "outputPath": "/Users/sebastien/DotnetProjects/CryptowatcherAI/obj/",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\sdubos\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/sebastien/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.1"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {},
+          "https://dotnetfeed.blob.core.windows.net/aspnet-aspnetcore-tooling/index.json": {},
+          "https://dotnetfeed.blob.core.windows.net/aspnet-aspnetcore/index.json": {},
+          "https://dotnetfeed.blob.core.windows.net/aspnet-entityframeworkcore/index.json": {},
+          "https://dotnetfeed.blob.core.windows.net/aspnet-extensions/index.json": {},
+          "https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json": {},
+          "https://dotnetfeed.blob.core.windows.net/dotnet-windowsdesktop/index.json": {}
         },
         "frameworks": {
           "netcoreapp2.1": {
@@ -41,6 +45,10 @@
       "frameworks": {
         "netcoreapp2.1": {
           "dependencies": {
+            "Cryptowatcher.TA-LIb-Core": {
+              "target": "Package",
+              "version": "[1.0.0, )"
+            },
             "Microsoft.ML": {
               "target": "Package",
               "version": "[0.11.0, )"

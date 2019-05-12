@@ -1,10 +1,10 @@
 using System;
 
-namespace cryptowatcherAI
+namespace cryptowatcherAI.Class
 {
     public class CoinTransfer
     {
-        public double OpenTime { get; set; }
+         public double OpenTime { get; set; }
         public double Open { get; set; }
         public double High { get; set; }
         public double Low { get; set; }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using cryptowatcherAI.Class;
+using cryptowatcherAI.Misc;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
@@ -39,6 +41,9 @@ namespace cryptowatcherAI
 
         static void Main(string[] args)
         {
+            //Debug
+            //BinanceMarket.GetCoin("BTCUSDT", "2h");
+
             Console.WriteLine("press 0 to create new csv from binance API");
             Console.WriteLine("press 1 to create and save new model");
             var userEntry = Console.ReadLine();
@@ -58,7 +63,7 @@ namespace cryptowatcherAI
             }
         }
 
-        private static void CreateCsv(string coin)
+        private static void CreateCsv(string symbol)
         {
             //0 - Create a StringBuilder output
             var csv = new StringBuilder();
@@ -75,17 +80,35 @@ namespace cryptowatcherAI
             csv.AppendLine(headerLine);
 
             //2-Actract data from Binance API and push to output
+            List<CoinTransfer> binanceData = BinanceMarket.GetCoin(symbol, "2h");
+
+            foreach (var ticker in binanceData)
+            {
+                csv.AppendLine(ticker.OpenTime.ToString() + "," + 
+                ticker.Open.ToString() + "," +
+                ticker.High.ToString() + "," +
+                ticker.Low.ToString() + "," +
+                ticker.Close.ToString() + "," +
+                ticker.Volume.ToString() + "," +
+                ticker.CloseTime.ToString() + "," +
+                ticker.QuoteAssetVolume.ToString() + "," +
+                ticker.NumberOfTrades.ToString() + "," +
+                ticker.BuyBaseAssetVolume.ToString() + "," +
+                ticker.BuyQuoteAssetVolume.ToString() + "," +
+                ticker.Ignore.ToString() + "," +
+                ticker.RSI.ToString() + "," +
+                ticker.MACD.ToString() + "," +
+                ticker.MACDSign.ToString() + "," +
+                ticker.MACDHist.ToString()
+                );
+            }
 
             //3 - Create output name
-            string resultFileName = string.Format("TrainData{0}-{1}-{2}-{3}{4}",
-                coin,
-                DateTime.Now.Year,
-                DateTime.Now.Month,
-                DateTime.Now.Minute,
-            ".csv");
+            string resultFileName = string.Format("{0}-TrainData.csv", symbol);
 
             //4 - save file to drive
-            File.WriteAllText(@"C:\Temp\" + resultFileName, csv.ToString());
+            //File.WriteAllText(@"C:\Temp\" + resultFileName, csv.ToString());  //For Windows
+            File.WriteAllText(resultFileName, csv.ToString());  //For Mac
 
             //3-save csv and print the file name
             Console.WriteLine(resultFileName);
