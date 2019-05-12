@@ -148,6 +148,6 @@ namespace cryptowatcherAI
             using (var fileStream = new FileStream(@"C:\Users\sdubos\Desktop\toto.zip", FileMode.Create, FileAccess.Write, FileShare.Write))
                 mlContext.Model.Save(model, fileStream);
         }
-        
+
     }
 }
