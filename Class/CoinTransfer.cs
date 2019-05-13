@@ -20,5 +20,6 @@ namespace cryptowatcherAI.Class
         public double MACD { get; set; }
         public double MACDSign { get; set; }
         public double MACDHist { get; set; }
+        public double Change { get; set; }
     }
 }

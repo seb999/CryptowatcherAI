@@ -77,30 +77,33 @@ namespace cryptowatcherAI
                 headerLine += propertyInfo.Name + ",";
             }
             headerLine = headerLine.Substring(0, headerLine.Length - 1);
-            csv.AppendLine(headerLine);
+            csv.Append(headerLine);
+            csv.AppendLine();
 
             //2-Actract data from Binance API and push to output
             List<CoinTransfer> binanceData = BinanceMarket.GetCoin(symbol, "2h");
 
             foreach (var ticker in binanceData)
             {
-                csv.AppendLine(ticker.OpenTime.ToString() + "," + 
-                ticker.Open.ToString() + "," +
-                ticker.High.ToString() + "," +
-                ticker.Low.ToString() + "," +
-                ticker.Close.ToString() + "," +
-                ticker.Volume.ToString() + "," +
-                ticker.CloseTime.ToString() + "," +
-                ticker.QuoteAssetVolume.ToString() + "," +
-                ticker.NumberOfTrades.ToString() + "," +
-                ticker.BuyBaseAssetVolume.ToString() + "," +
-                ticker.BuyQuoteAssetVolume.ToString() + "," +
-                ticker.Ignore.ToString() + "," +
-                ticker.RSI.ToString() + "," +
-                ticker.MACD.ToString() + "," +
-                ticker.MACDSign.ToString() + "," +
-                ticker.MACDHist.ToString()
-                );
+                csv.Append(ticker.OpenTime + "," +
+                ticker.Open.ToString().Replace(",", ".") + "," +
+                ticker.High.ToString().Replace(",", ".") + "," +
+                ticker.Low.ToString().Replace(",", ".") + "," +
+                ticker.Close.ToString().Replace(",", ".") + "," +
+                ticker.Volume.ToString().Replace(",", ".") + "," +
+                ticker.CloseTime + "," +
+                ticker.QuoteAssetVolume.ToString().Replace(",", ".") + "," +
+                ticker.NumberOfTrades.ToString().Replace(",", ".") + "," +
+                ticker.BuyBaseAssetVolume.ToString().Replace(",", ".") + "," +
+                ticker.BuyQuoteAssetVolume.ToString().Replace(",", ".") + "," +
+                ticker.Ignore.ToString().Replace(",", ".") + "," +
+                ticker.RSI.ToString().Replace(",", ".") + "," +
+                ticker.MACD.ToString().Replace(",", ".") + "," +
+                ticker.MACDSign.ToString().Replace(",", ".") + "," +
+                ticker.MACDHist.ToString().Replace(",", ".") + "," +
+                ticker.Change.ToString().Replace(",", "."));
+                
+                csv.AppendLine();
             }
 
             //3 - Create output name

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using cryptowatcherAI.Class;
 using cryptowatcherAI.Misc;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace cryptowatcherAI.Misc
 {
@@ -16,8 +17,9 @@ namespace cryptowatcherAI.Misc
             string payload = "";
             double startTime = 0;
             double endTime = 0;
+            double previousClose = 0;
 
-            //We take data 5 times 8 months (8months with interval 2h = 70j * 12 measure / j = 837 measures  )
+            //We take data 10 times 70 days (with interval 2h = 70j * 12 measure / j = 837 measures  )
             for (int i = 10; i >= 1; i--)
             {
                 startTime = Math.Round(DateTime.UtcNow.AddDays(-70 * i).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
@@ -52,8 +54,10 @@ namespace cryptowatcherAI.Misc
                         BuyBaseAssetVolume = item[9],
                         BuyQuoteAssetVolume = item[10],
                         Ignore = item[11],
+                        Change = Math.Round(item[4]-previousClose,2),
                     };
                     quotationHistory.Add(newQuotation);
+                    previousClose = item[4];
                 }
             }
 
@@ -61,7 +65,7 @@ namespace cryptowatcherAI.Misc
             TradeIndicator.CalculateRsiList(14, ref quotationHistory);
             TradeIndicator.CalculateMacdList(ref quotationHistory);
 
-            return quotationHistory;
+            return quotationHistory.ToList();
         }
     }
 }
