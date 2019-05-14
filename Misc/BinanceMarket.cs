@@ -9,7 +9,6 @@ namespace cryptowatcherAI.Misc
 {
     public static class BinanceMarket
     {
-
         public static List<CoinTransfer> GetCoin(string symbol, string interval)
         {
             List<CoinTransfer> quotationHistory = new List<CoinTransfer>();
@@ -37,8 +36,8 @@ namespace cryptowatcherAI.Misc
                 //2 - we desirelize
                 var result = JsonConvert.DeserializeObject<List<List<double>>>(payload);
 
-                //3 - We add each item to our final list
-                foreach (var item in result)
+                //3 - We add each item to our final list (26 first doesn;t contain RSI neither MACD calulation)
+                foreach (var item in result.Skip(26))
                 {
                     CoinTransfer newQuotation = new CoinTransfer()
                     {
@@ -57,15 +56,21 @@ namespace cryptowatcherAI.Misc
                         Change = Math.Round(item[4]-previousClose,2),
                     };
                     quotationHistory.Add(newQuotation);
-                    previousClose = item[4];
                 }
             }
+            quotationHistory.Where((p, index)=>CalculateFuturePrice(p, index, quotationHistory)).ToList();
 
             //Add RSI calculation to the list
             TradeIndicator.CalculateRsiList(14, ref quotationHistory);
             TradeIndicator.CalculateMacdList(ref quotationHistory);
 
             return quotationHistory.ToList();
+        }
+
+        private static bool CalculateFuturePrice(CoinTransfer p, int index, List<CoinTransfer> quotationHistory )
+        {
+            p.Change = p.Close -  quotationHistory[index+1].Close;
+            return true;
         }
     }
 }

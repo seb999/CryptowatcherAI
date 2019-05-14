@@ -8,41 +8,15 @@ using cryptowatcherAI.Misc;
 using Microsoft.Data.DataView;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using static CryptowatcherAI.Class.Prediction;
 
 namespace cryptowatcherAI
 {
     class Program
     {
-        // STEP 1: Define your data structures
-        // - Price is what you are predicting, and is only set when training
-        public class BevrageData
-        {
-            [LoadColumn(0)]
-            public string FullName { get; set; }
-
-            [LoadColumn(1)]
-            public float Price { get; set; }
-
-            [LoadColumn(2)]
-            public float Volume { get; set; }
-
-            [LoadColumn(3)]
-            public string Type { get; set; }
-
-            [LoadColumn(4)]
-            public string Country { get; set; }
-        }
-
-        public class BevragePrediction
-        {
-            [ColumnName("Score")]
-            public float Price { get; set; }
-        }
-
         static void Main(string[] args)
         {
-            //Debug
-            //BinanceMarket.GetCoin("BTCUSDT", "2h");
+            CreateModel("BTCUSDT");
 
             Console.WriteLine("press 0 to create new csv from binance API");
             Console.WriteLine("press 1 to create and save new model");
@@ -59,7 +33,9 @@ namespace cryptowatcherAI
             if (userEntry == "1")
             {
                 Console.WriteLine("############ Create and save new model ###########");
-                CreateTrainSaveModel();
+                Console.WriteLine("Enter valide coin pair value");
+                var coin = Console.ReadLine();
+                CreateModel(coin);
             }
         }
 
@@ -102,7 +78,7 @@ namespace cryptowatcherAI
                 ticker.MACDSign.ToString().Replace(",", ".") + "," +
                 ticker.MACDHist.ToString().Replace(",", ".") + "," +
                 ticker.Change.ToString().Replace(",", "."));
-                
+
                 csv.AppendLine();
             }
 
@@ -110,70 +86,98 @@ namespace cryptowatcherAI
             string resultFileName = string.Format("{0}-TrainData.csv", symbol);
 
             //4 - save file to drive
-            //File.WriteAllText(@"C:\Temp\" + resultFileName, csv.ToString());  //For Windows
-            File.WriteAllText(resultFileName, csv.ToString());  //For Mac
+            File.WriteAllText(resultFileName, csv.ToString());
 
             //3-save csv and print the file name
             Console.WriteLine(resultFileName);
             Console.ReadLine();
         }
 
-        private static void CreateTrainSaveModel()
+        private static void CreateModel(string symbol)
         {
-            // STEP 2: Create a ML.NET environment
+            string sourcePath = string.Format("{0}-TrainData.csv", symbol);
+            string modelPath = "";
+            ITransformer model;
             MLContext mlContext = new MLContext();
 
-            IDataView trainingDataView = mlContext.Data.LoadFromTextFile<BevrageData>(path: "train-data.csv", hasHeader: true, separatorChar: ',');
+            //1 - Load data from csv
+            IDataView trainingDataView = mlContext.Data.LoadFromTextFile<CoinData>(path: sourcePath, hasHeader: true, separatorChar: ',');
 
-            var pipeline = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(BevrageData.Price)) //the output with LABEL as name
-             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "CatVolume", inputColumnName: nameof(BevrageData.Volume)))
-             .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "CatFeaturesType", inputColumnName: nameof(BevrageData.Type))) //convert string into numeric
-             .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "CatFeaturesCountry", inputColumnName: nameof(BevrageData.Country))) //convert string into numeric
-             .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "CatFullName", inputColumnName: nameof(BevrageData.FullName))) //convert string into numeric
-             .Append(mlContext.Transforms.Concatenate("Features", "CatVolume", "CatFullName", "CatFeaturesType", "CatFeaturesCountry") //concat all
-             .Append(mlContext.Regression.Trainers.FastTree()));
-            //.Append(mlContext.Regression.Trainers.PoissonRegression(labelColumnName: "Label", featureColumnName: "Features"));
+            //2 - Define pipeline
+            var pipeline = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.Change)) //the output with LABEL as name
+             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
+             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
+             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MACDHist", inputColumnName: nameof(CoinData.MACDHist)))
+            .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "RSI", "MACDHist"))//concat all
+            .Append(mlContext.Regression.Trainers.FastForest());
 
-            // STEP 3: Train your model based on the data set
-            ITransformer model = pipeline.Fit(trainingDataView);
-
+            //3 - Train your model based on the data set
+            model = pipeline.Fit(trainingDataView);
+            modelPath = string.Format("{0}-{1}.zip", symbol, "Fast Forest"); 
             // STEP 4: We save the model
-            SaveModelAsFile(mlContext, model);
+            SaveModelAsFile(mlContext, model, modelPath);
+
+        
+            var pipeline2 = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.Change)) //the output with LABEL as name
+             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
+             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
+             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MACDHist", inputColumnName: nameof(CoinData.MACDHist)))
+            .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "RSI", "MACDHist"))//concat all
+            .Append(mlContext.Regression.Trainers.FastTree());
+            model = pipeline2.Fit(trainingDataView);
+            modelPath = string.Format("{0}-{1}.zip", symbol, "Fast Tree"); 
+            // STEP 4: We save the model
+            SaveModelAsFile(mlContext, model, modelPath);
+
+             var pipeline3 = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.Change)) //the output with LABEL as name
+             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
+             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
+             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MACDHist", inputColumnName: nameof(CoinData.MACDHist)))
+            .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "RSI", "MACDHist"))//concat all
+            .Append(mlContext.Regression.Trainers.OnlineGradientDescent());
+            model = pipeline2.Fit(trainingDataView);
+            modelPath = string.Format("{0}-{1}.zip", symbol, "Gradient Descent"); 
+            // STEP 4: We save the model
+            SaveModelAsFile(mlContext, model, modelPath);
+
+
+
+
 
             // STEP 5: We load the model 
             ITransformer loadedModel;
-            using (var stream = new FileStream(@"C:\Users\sdubos\Desktop\toto.zip", FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var stream = new FileStream(modelPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 loadedModel = mlContext.Model.Load(stream);
             }
 
-            // STEP 5: Use your model to make a prediction
-            IEnumerable<BevrageData> drinks = new[]
-           {
-                new BevrageData { FullName="Cheap Lager", Type="Öl", Volume=500, Country="Sverige" },
-                new BevrageData { FullName="Dummy Weiss", Type="Öl", Volume=500, Country="Tyskland" },
-                new BevrageData { FullName="New Trappist", Type="Öl", Volume=330, Country="Belgien" },
-                new BevrageData { FullName="Mortgage 10 years", Type="Whisky", Volume=700, Country="Storbritannien" },
-                new BevrageData { FullName="Mortgage 21 years", Type="Whisky", Volume=700, Country="Storbritannien" },
-                new BevrageData { FullName="Merlot Classic", Type="Rött vin", Volume=750, Country="Frankrike" },
-                new BevrageData { FullName="Merlot Grand Cru", Type="Rött vin", Volume=750, Country="Frankrike" },
-                new BevrageData { FullName="Palinka", Type="Likör", Volume=750, Country="Romania" }
-            };
-
             // FINAL STEP: we do a prediction based on the model generated privously
-            var predictionFunction = mlContext.Model.CreatePredictionEngine<BevrageData, BevragePrediction>(loadedModel);
-            var prediction = predictionFunction.Predict(new BevrageData { FullName = "Cheap Lager", Type = "Öl", Volume = 500, Country = "Sverige" });
+            var predictionFunction = mlContext.Model.CreatePredictionEngine<CoinData, CoinPrediction>(loadedModel);
+            CoinPrediction prediction = predictionFunction.Predict(new CoinData
+            {
+                Volume = (float)83.825741,
+                Open = (float)4136.48,
+                RSI = (float)51.72,
+                MACDHist = (float)-2.01
+            });
 
+            //Metrics
+            // IDataView dataView = mlContext.Data.LoadFromTextFile<CoinData>("testMe.csv", hasHeader: false, separatorChar: ',');
+            // var predictions = model.Transform(dataView);
+            // var metrics = mlContext.Regression.Evaluate(predictions, "Label", "Score");
 
-            Console.WriteLine("Press any key to exit....");
+            Console.WriteLine("Models completed, press any key to exit....");
             Console.ReadLine();
         }
 
-        private static void SaveModelAsFile(MLContext mlContext, ITransformer model)
+        #region helper
+
+        private static void SaveModelAsFile(MLContext mlContext, ITransformer model, string path)
         {
-            using (var fileStream = new FileStream(@"C:\Users\sdubos\Desktop\toto.zip", FileMode.Create, FileAccess.Write, FileShare.Write))
+            using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Write))
                 mlContext.Model.Save(model, fileStream);
         }
 
+        #endregion
     }
 }
