@@ -31,13 +31,13 @@ namespace CryptowatcherAI.Class
             [LoadColumn(11)]
             public float Ignore { get; set; }
             [LoadColumn(12)]
-            public float RSI { get; set; }
+            public float Rsi { get; set; }
             [LoadColumn(13)]
-            public float MACD { get; set; }
+            public float Macd { get; set; }
             [LoadColumn(14)]
-            public float MACDSign { get; set; }
+            public float MacdSign { get; set; }
             [LoadColumn(15)]
-            public float MACDHist { get; set; }
+            public float MacdHist { get; set; }
             [LoadColumn(16)]
             public float FuturePrice { get; set; }
         }

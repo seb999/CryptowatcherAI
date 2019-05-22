@@ -17,10 +17,10 @@ namespace cryptowatcherAI.Class
         public double BuyBaseAssetVolume { get; set; }
         public double BuyQuoteAssetVolume { get; set; }
         public double Ignore { get; set; }
-        public double RSI { get; set; }
-        public double MACD { get; set; }
-        public double MACDSign { get; set; }
-        public double MACDHist { get; set; }
+        public double Rsi { get; set; }
+        public double Macd { get; set; }
+        public double MacdSign { get; set; }
+        public double MacdHist { get; set; }
         public double FuturePrice { get; set; }
     }
 }

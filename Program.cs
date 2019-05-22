@@ -16,18 +16,23 @@ namespace cryptowatcherAI
     {
         static void Main(string[] args)
         {
-            //CreateModel("BTCUSDT");
-
             Console.WriteLine("press 0 to create new csv from binance API");
             Console.WriteLine("press 1 to create and save new model");
             var userEntry = Console.ReadLine();
 
             if (userEntry == "0")
             {
-                Console.WriteLine("############ Create csv ###########");
-                Console.WriteLine("Enter valide coin pair value");
-                var coin = Console.ReadLine();
-                CreateCsv(coin);
+                // Console.WriteLine("############ Create csv ###########");
+                // Console.WriteLine("Enter valide coin pair value");
+                // var coin = Console.ReadLine();
+
+                //CreateCsv(coin);
+
+                List<string> symbolList = BinanceMarket.GetSymbolList("USDT");
+                foreach (var coinName in symbolList)
+                {
+                    CreateCsv(coinName);
+                }
             }
 
             if (userEntry == "1")
@@ -57,7 +62,7 @@ namespace cryptowatcherAI
             csv.AppendLine();
 
             //2-Actract data from Binance API and push to output
-            List<CoinTransfer> binanceData = BinanceMarket.GetCoin(symbol, "2h");
+            List<CoinTransfer> binanceData = BinanceMarket.GetCoin(symbol, "1h");
 
             foreach (var ticker in binanceData)
             {
@@ -73,10 +78,10 @@ namespace cryptowatcherAI
                 ticker.BuyBaseAssetVolume.ToString().Replace(",", ".") + "," +
                 ticker.BuyQuoteAssetVolume.ToString().Replace(",", ".") + "," +
                 ticker.Ignore.ToString().Replace(",", ".") + "," +
-                ticker.RSI.ToString().Replace(",", ".") + "," +
-                ticker.MACD.ToString().Replace(",", ".") + "," +
-                ticker.MACDSign.ToString().Replace(",", ".") + "," +
-                ticker.MACDHist.ToString().Replace(",", ".") + "," +
+                ticker.Rsi.ToString().Replace(",", ".") + "," +
+                ticker.Macd.ToString().Replace(",", ".") + "," +
+                ticker.MacdSign.ToString().Replace(",", ".") + "," +
+                ticker.MacdHist.ToString().Replace(",", ".") + "," +
                 ticker.FuturePrice.ToString().Replace(",", "."));
 
                 csv.AppendLine();
@@ -107,38 +112,39 @@ namespace cryptowatcherAI
             var pipeline = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
              .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
              .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
-             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MACDHist", inputColumnName: nameof(CoinData.MACDHist)))
-            .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "RSI", "MACDHist"))//concat all
+             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MacdHist", inputColumnName: nameof(CoinData.MacdHist)))
+             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Rsi", inputColumnName: nameof(CoinData.Rsi)))
+            .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "Rsi", "MacdHist"))//concat all
             .Append(mlContext.Regression.Trainers.FastForest());
 
             //3 - Train your model based on the data set
             model = pipeline.Fit(trainingDataView);
-            modelPath = string.Format("{0}-{1}.zip", symbol, "Fast Forest"); 
+            modelPath = string.Format("//Csv//{0}-{1}.zip", symbol, "Fast Forest"); 
             // STEP 4: We save the model
             SaveModelAsFile(mlContext, model, modelPath);
 
         
-            var pipeline2 = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
-             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
-             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
-             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MACDHist", inputColumnName: nameof(CoinData.MACDHist)))
-            .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "RSI", "MACDHist"))//concat all
-            .Append(mlContext.Regression.Trainers.FastTree());
-            model = pipeline2.Fit(trainingDataView);
-            modelPath = string.Format("{0}-{1}.zip", symbol, "Fast Tree"); 
-            // STEP 4: We save the model
-            SaveModelAsFile(mlContext, model, modelPath);
+            // var pipeline2 = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
+            //  .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
+            //  .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
+            //  .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MACDHist", inputColumnName: nameof(CoinData.MACDHist)))
+            // .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "RSI", "MACDHist"))//concat all
+            // .Append(mlContext.Regression.Trainers.FastTree());
+            // model = pipeline2.Fit(trainingDataView);
+            // modelPath = string.Format("{0}-{1}.zip", symbol, "Fast Tree"); 
+            // // STEP 4: We save the model
+            // SaveModelAsFile(mlContext, model, modelPath);
 
-             var pipeline3 = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
-             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
-             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
-             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MACDHist", inputColumnName: nameof(CoinData.MACDHist)))
-            .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "RSI", "MACDHist"))//concat all
-            .Append(mlContext.Regression.Trainers.OnlineGradientDescent());
-            model = pipeline2.Fit(trainingDataView);
-            modelPath = string.Format("{0}-{1}.zip", symbol, "Gradient Descent"); 
-            // STEP 4: We save the model
-            SaveModelAsFile(mlContext, model, modelPath);
+            //  var pipeline3 = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
+            //  .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
+            //  .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
+            //  .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MACDHist", inputColumnName: nameof(CoinData.MACDHist)))
+            // .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "RSI", "MACDHist"))//concat all
+            // .Append(mlContext.Regression.Trainers.OnlineGradientDescent());
+            // model = pipeline2.Fit(trainingDataView);
+            // modelPath = string.Format("{0}-{1}.zip", symbol, "Gradient Descent"); 
+            // // STEP 4: We save the model
+            // SaveModelAsFile(mlContext, model, modelPath);
 
 
 
@@ -157,8 +163,8 @@ namespace cryptowatcherAI
             {
                 Volume = (float)83.825741,
                 Open = (float)4136.48,
-                RSI = (float)51.72,
-                MACDHist = (float)-2.01
+                Rsi = (float)51.72,
+                MacdHist = (float)-2.01
             });
 
             //Metrics

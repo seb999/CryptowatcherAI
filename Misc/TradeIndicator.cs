@@ -21,7 +21,7 @@ namespace cryptowatcherAI.Misc
             {
                 for (int i = 0; i <= outNBElements-1; i++)
                 {
-                    quotationList[i+beginIndex].RSI = rsiValues[i];
+                    quotationList[i+beginIndex].Rsi = rsiValues[i];
                 }
             }
         }
@@ -41,9 +41,9 @@ namespace cryptowatcherAI.Misc
             {
                 for (int i = 0; i < outNBElements; i++)
                 {
-                    quotationList[i+beginIndex].MACD = Math.Round(outMACD[i],2);
-                    quotationList[i+beginIndex].MACDHist = outMACDHist[i];
-                    quotationList[i+beginIndex].MACDSign = outMACDSignal[i];
+                    quotationList[i+beginIndex].Macd = outMACD[i];
+                    quotationList[i+beginIndex].MacdHist = outMACDHist[i];
+                    quotationList[i+beginIndex].MacdSign = outMACDSignal[i];
                 }                 
             }
         }

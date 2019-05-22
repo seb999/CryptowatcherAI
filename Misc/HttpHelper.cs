@@ -1,33 +1,29 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Newtonsoft.Json;
 
 namespace cryptowatcherAI.Misc
 {
     public static class HttpHelper
     {
-        public static string GetApiData(Uri ApiUri)
+        public static T GetApiData<T>(Uri ApiUri)
         {
-            try
+            using (var client = new HttpClient())
             {
-                using (var client = new HttpClient())
+                client.BaseAddress = ApiUri;
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var response = client.GetAsync("").Result;
+                if (response.IsSuccessStatusCode)
                 {
-                    client.BaseAddress = ApiUri;
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var response = client.GetAsync("").Result;
-                    if (response.IsSuccessStatusCode)
-                    {
-                        return response.Content.ReadAsStringAsync().Result;
-                    }
+                    return JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
+                }
+                else
+                { 
+                    return default(T);
                 }
             }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
-
-            return "";
         }
     }
 }
