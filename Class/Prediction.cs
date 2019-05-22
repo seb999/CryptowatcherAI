@@ -39,13 +39,13 @@ namespace CryptowatcherAI.Class
             [LoadColumn(15)]
             public float MACDHist { get; set; }
             [LoadColumn(16)]
-            public float Change { get; set; }
+            public float FuturePrice { get; set; }
         }
 
         public class CoinPrediction
         {
             [ColumnName("Score")]
-            public float Change { get; set; }
+            public float FuturePrice { get; set; }
         }
 
     }

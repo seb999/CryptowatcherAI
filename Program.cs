@@ -16,7 +16,7 @@ namespace cryptowatcherAI
     {
         static void Main(string[] args)
         {
-            CreateModel("BTCUSDT");
+            //CreateModel("BTCUSDT");
 
             Console.WriteLine("press 0 to create new csv from binance API");
             Console.WriteLine("press 1 to create and save new model");
@@ -77,7 +77,7 @@ namespace cryptowatcherAI
                 ticker.MACD.ToString().Replace(",", ".") + "," +
                 ticker.MACDSign.ToString().Replace(",", ".") + "," +
                 ticker.MACDHist.ToString().Replace(",", ".") + "," +
-                ticker.Change.ToString().Replace(",", "."));
+                ticker.FuturePrice.ToString().Replace(",", "."));
 
                 csv.AppendLine();
             }
@@ -104,7 +104,7 @@ namespace cryptowatcherAI
             IDataView trainingDataView = mlContext.Data.LoadFromTextFile<CoinData>(path: sourcePath, hasHeader: true, separatorChar: ',');
 
             //2 - Define pipeline
-            var pipeline = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.Change)) //the output with LABEL as name
+            var pipeline = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
              .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
              .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
              .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MACDHist", inputColumnName: nameof(CoinData.MACDHist)))
@@ -118,7 +118,7 @@ namespace cryptowatcherAI
             SaveModelAsFile(mlContext, model, modelPath);
 
         
-            var pipeline2 = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.Change)) //the output with LABEL as name
+            var pipeline2 = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
              .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
              .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
              .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MACDHist", inputColumnName: nameof(CoinData.MACDHist)))
@@ -129,7 +129,7 @@ namespace cryptowatcherAI
             // STEP 4: We save the model
             SaveModelAsFile(mlContext, model, modelPath);
 
-             var pipeline3 = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.Change)) //the output with LABEL as name
+             var pipeline3 = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
              .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
              .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
              .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MACDHist", inputColumnName: nameof(CoinData.MACDHist)))

@@ -16,7 +16,6 @@ namespace cryptowatcherAI.Misc
             string payload = "";
             double startTime = 0;
             double endTime = 0;
-            double previousClose = 0;
 
             //We take data 10 times 70 days (with interval 2h = 70j * 12 measure / j = 837 measures  )
             for (int i = 10; i >= 1; i--)
@@ -53,11 +52,12 @@ namespace cryptowatcherAI.Misc
                         BuyBaseAssetVolume = item[9],
                         BuyQuoteAssetVolume = item[10],
                         Ignore = item[11],
-                        Change = Math.Round(item[4]-previousClose,2),
                     };
                     quotationHistory.Add(newQuotation);
                 }
             }
+
+            //Calculate change from next day to current day
             quotationHistory.Where((p, index)=>CalculateFuturePrice(p, index, quotationHistory)).ToList();
 
             //Add RSI calculation to the list
@@ -69,7 +69,8 @@ namespace cryptowatcherAI.Misc
 
         private static bool CalculateFuturePrice(CoinTransfer p, int index, List<CoinTransfer> quotationHistory )
         {
-            p.Change = p.Close -  quotationHistory[index+1].Close;
+            if(index == quotationHistory.Count-1) return true;
+            p.FuturePrice =  quotationHistory[index+1].Close - p.Close;
             return true;
         }
     }
