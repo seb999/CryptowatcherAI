@@ -129,32 +129,32 @@
           "runtimes/win-x64/native/FactorizationMachineNative.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.11.27505.13"
+            "fileVersion": "0.0.0.0"
           },
           "runtimes/win-x64/native/FastTreeNative.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.11.27505.13"
+            "fileVersion": "0.0.0.0"
           },
           "runtimes/win-x64/native/LdaNative.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.11.27505.13"
+            "fileVersion": "0.0.0.0"
           },
           "runtimes/win-x86/native/FactorizationMachineNative.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.11.27505.13"
+            "fileVersion": "0.0.0.0"
           },
           "runtimes/win-x86/native/FastTreeNative.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.11.27505.13"
+            "fileVersion": "0.0.0.0"
           },
           "runtimes/win-x86/native/LdaNative.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.11.27505.13"
+            "fileVersion": "0.0.0.0"
           }
         }
       },
@@ -182,12 +182,12 @@
           "runtimes/win-x64/native/CpuMathNative.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.11.27505.13"
+            "fileVersion": "0.0.0.0"
           },
           "runtimes/win-x86/native/CpuMathNative.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.11.27505.13"
+            "fileVersion": "0.0.0.0"
           }
         }
       },
@@ -619,7 +619,7 @@
     "System.Collections.Specialized/4.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-NoPBj0ykejqAWW4p4gGtrrL+3c84ZLSvGnHgq422ew1Rj4WKj1FA8/BCybqC111EtgcqUl6ZJNFYYS22HLgbjA==",
+      "sha512": "sha512-Epx8PoVZR0iuOnJJDzp7pWvdfMMOAvpUo95pC4ScH2mJuXkKA2Y4aR3cG9qt2klHgSons1WFh4kcGW7cSXvrxg==",
       "path": "system.collections.specialized/4.3.0",
       "hashPath": "system.collections.specialized.4.3.0.nupkg.sha512"
     },
@@ -633,7 +633,7 @@
     "System.ComponentModel.Primitives/4.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-KMVuoQ+8bMQ/Z59M3s64num5AD74X5YSqVc7ibwGkPTfmmkl2W8VuSxLRJtpw4KzQrSKUgR0BLbF0adPfcTSGQ==",
+      "sha512": "sha512-j8GUkCpM8V4d4vhLIIoBLGey2Z5bCkMVNjEZseyAlm4n5arcsJOeI3zkUP+zvZgzsbLTYh4lYeP/ZD/gdIAPrw==",
       "path": "system.componentmodel.primitives/4.3.0",
       "hashPath": "system.componentmodel.primitives.4.3.0.nupkg.sha512"
     },

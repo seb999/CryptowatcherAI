@@ -53,6 +53,7 @@ namespace cryptowatcherAI
                 var modelPathList = Directory.GetFiles(rootFolder, "*", SearchOption.AllDirectories);
                 foreach (var coinPath in modelPathList)
                 {
+                    if(Path.GetFileName(coinPath).IndexOf("-")<0) continue;
                     CreateModel(coinPath);
                 }
 
@@ -181,18 +182,18 @@ namespace cryptowatcherAI
             SaveModelAsFile(mlContext, model, sourcePath, "Stochastic dual Coordinate");
 
             // // STEP 5: We load the model FOR DEBUGGING
-            ITransformer loadedModel;
-            loadedModel = LoadModelFromFile(mlContext, sourcePath, "Fast Forest");
+            // ITransformer loadedModel;
+            // loadedModel = LoadModelFromFile(mlContext, sourcePath, "Fast Forest");
 
             // FINAL STEP: we do a prediction based on the model generated privously
-            var predictionFunction = mlContext.Model.CreatePredictionEngine<CoinData, CoinPrediction>(loadedModel);
-            CoinPrediction prediction = predictionFunction.Predict(new CoinData
-            {
-                Volume = (float)83.825741,
-                Open = (float)4136.48,
-                Rsi = (float)51.72,
-                MacdHist = (float)-2.01
-            });
+            // var predictionFunction = mlContext.Model.CreatePredictionEngine<CoinData, CoinPrediction>(loadedModel);
+            // CoinPrediction prediction = predictionFunction.Predict(new CoinData
+            // {
+            //     Volume = (float)83.825741,
+            //     Open = (float)4136.48,
+            //     Rsi = (float)51.72,
+            //     MacdHist = (float)-2.01
+            // });
         }
 
         #region helper
@@ -210,7 +211,7 @@ namespace cryptowatcherAI
         {
             var fileName = Path.GetFileName(sourcePath);
             var symbol = fileName.Substring(0, fileName.IndexOf("-"));
-            var modelPath = string.Format("{0}\\MODEL\\{1}-{2}.zip", Environment.CurrentDirectory, symbol, modelType);
+            var modelPath = string.Format("{0}/MODEL/{1}-{2}.zip", Environment.CurrentDirectory, symbol, modelType);
 
             using (var fileStream = new FileStream(modelPath, FileMode.Create, FileAccess.Write, FileShare.Write))
                 mlContext.Model.Save(model, fileStream);
