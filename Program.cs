@@ -17,18 +17,16 @@ namespace cryptowatcherAI
         static void Main(string[] args)
         {
             Console.WriteLine("press 0 to create new csv from binance API");
-            Console.WriteLine("press 1 to create and save new model");
+            Console.WriteLine("press 1 to create csv from all binance coin for specified market");
+            Console.WriteLine("press 2 to create and save new model");
             var userEntry = Console.ReadLine();
 
             if (userEntry == "0")
             {
-                // Console.WriteLine("############ Create csv ###########");
-                // Console.WriteLine("Enter valide coin pair value");
-                // var coin = Console.ReadLine();
-
-                //CreateCsv(coin);
-
-                List<string> symbolList = BinanceMarket.GetSymbolList("USDT");
+                Console.WriteLine("############ Create csv for allcoin!!! ###########");
+                Console.WriteLine("Enter market : USDT or BNB or BTC ?");
+                var market = Console.ReadLine();
+                List<string> symbolList = BinanceMarket.GetSymbolList(market);
                 foreach (var coinName in symbolList)
                 {
                     CreateCsv(coinName);
@@ -37,10 +35,28 @@ namespace cryptowatcherAI
 
             if (userEntry == "1")
             {
-                Console.WriteLine("############ Create and save new model ###########");
+                Console.WriteLine("############ Create csv ###########");
                 Console.WriteLine("Enter valide coin pair value");
                 var coin = Console.ReadLine();
-                CreateModel(coin);
+                CreateCsv(coin);
+            }
+
+
+            if (userEntry == "2")
+            {
+                Console.WriteLine("############ Create and save new model ###########");
+                Console.ReadLine();
+
+                //List all csv available
+                var rootFolder = Environment.CurrentDirectory + "/Csv/";
+                var modelPathList = Directory.GetFiles(rootFolder, "*", SearchOption.AllDirectories);
+                foreach (var coinPath in modelPathList)
+                {
+                    CreateModel(coinPath);
+                }
+
+                Console.WriteLine("Models completed, press any key to exit....");
+                Console.ReadLine();
             }
         }
 
@@ -98,90 +114,94 @@ namespace cryptowatcherAI
             Console.ReadLine();
         }
 
-        private static void CreateModel(string symbol)
+        private static void CreateModel(string sourcePath)
         {
-            string sourcePath = string.Format("{0}-TrainData.csv", symbol);
-            string modelPath = "";
+
             ITransformer model;
             MLContext mlContext = new MLContext();
 
             //1 - Load data from csv
             IDataView trainingDataView = mlContext.Data.LoadFromTextFile<CoinData>(path: sourcePath, hasHeader: true, separatorChar: ',');
-
-            //2 - Define pipeline
-            var pipeline = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
-             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
-             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
-             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MacdHist", inputColumnName: nameof(CoinData.MacdHist)))
-             .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Rsi", inputColumnName: nameof(CoinData.Rsi)))
-            .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "Rsi", "MacdHist"))//concat all
-            .Append(mlContext.Regression.Trainers.FastForest());
-
+            //2 - Create pipeline
+            var pipeline1 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.FastForest()); ;
             //3 - Train your model based on the data set
-            model = pipeline.Fit(trainingDataView);
-            modelPath = string.Format("//Csv//{0}-{1}.zip", symbol, "Fast Forest"); 
-            // STEP 4: We save the model
-            SaveModelAsFile(mlContext, model, modelPath);
+            model = pipeline1.Fit(trainingDataView);
+            //4: We save the model
+            SaveModelAsFile(mlContext, model, sourcePath, "Fast Forest");
 
-        
-            // var pipeline2 = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
-            //  .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
-            //  .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
-            //  .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MACDHist", inputColumnName: nameof(CoinData.MACDHist)))
-            // .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "RSI", "MACDHist"))//concat all
-            // .Append(mlContext.Regression.Trainers.FastTree());
-            // model = pipeline2.Fit(trainingDataView);
-            // modelPath = string.Format("{0}-{1}.zip", symbol, "Fast Tree"); 
-            // // STEP 4: We save the model
-            // SaveModelAsFile(mlContext, model, modelPath);
+            var pipeline2 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.FastTree()); ;
+            model = pipeline2.Fit(trainingDataView);
+            SaveModelAsFile(mlContext, model, sourcePath, "Fast Tree");
 
-            //  var pipeline3 = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
-            //  .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
-            //  .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
-            //  .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MACDHist", inputColumnName: nameof(CoinData.MACDHist)))
-            // .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "RSI", "MACDHist"))//concat all
-            // .Append(mlContext.Regression.Trainers.OnlineGradientDescent());
-            // model = pipeline2.Fit(trainingDataView);
-            // modelPath = string.Format("{0}-{1}.zip", symbol, "Gradient Descent"); 
-            // // STEP 4: We save the model
-            // SaveModelAsFile(mlContext, model, modelPath);
+            var pipeline3 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.FastTreeTweedie()); ;
+            model = pipeline3.Fit(trainingDataView);
+            SaveModelAsFile(mlContext, model, sourcePath, "Fast Tree Tweedie");
 
+            var pipeline4 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.GeneralizedAdditiveModels()); ;
+            model = pipeline4.Fit(trainingDataView);
+            SaveModelAsFile(mlContext, model, sourcePath, "Additive Model");
 
-
-
-
-            // STEP 5: We load the model 
-            ITransformer loadedModel;
-            using (var stream = new FileStream(modelPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            try
             {
-                loadedModel = mlContext.Model.Load(stream);
+                var pipeline5 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.OnlineGradientDescent()); ;
+                model = pipeline5.Fit(trainingDataView);
+                SaveModelAsFile(mlContext, model, sourcePath, "Gradient Descent");
+            }
+            catch (System.Exception)
+            {
+                
             }
 
-            // FINAL STEP: we do a prediction based on the model generated privously
-            var predictionFunction = mlContext.Model.CreatePredictionEngine<CoinData, CoinPrediction>(loadedModel);
-            CoinPrediction prediction = predictionFunction.Predict(new CoinData
-            {
-                Volume = (float)83.825741,
-                Open = (float)4136.48,
-                Rsi = (float)51.72,
-                MacdHist = (float)-2.01
-            });
+            var pipeline7 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.StochasticDualCoordinateAscent()); ;
+            model = pipeline7.Fit(trainingDataView);
+            SaveModelAsFile(mlContext, model, sourcePath, "Stochastic dual Coordinate");
 
-            //Metrics
-            // IDataView dataView = mlContext.Data.LoadFromTextFile<CoinData>("testMe.csv", hasHeader: false, separatorChar: ',');
-            // var predictions = model.Transform(dataView);
-            // var metrics = mlContext.Regression.Evaluate(predictions, "Label", "Score");
+            //     // STEP 5: We load the model FOR DEBUGGING
+            //     ITransformer loadedModel;
+            //    loadedModel = LoadModelFromFile(mlContext, sourcePath, "Fast Forest");
 
-            Console.WriteLine("Models completed, press any key to exit....");
-            Console.ReadLine();
+            //     // FINAL STEP: we do a prediction based on the model generated privously
+            //     var predictionFunction = mlContext.Model.CreatePredictionEngine<CoinData, CoinPrediction>(loadedModel);
+            //     CoinPrediction prediction = predictionFunction.Predict(new CoinData
+            //     {
+            //         Volume = (float)83.825741,
+            //         Open = (float)4136.48,
+            //         Rsi = (float)51.72,
+            //         MacdHist = (float)-2.01
+            //     });
         }
 
         #region helper
 
-        private static void SaveModelAsFile(MLContext mlContext, ITransformer model, string path)
+        private static EstimatorChain<ColumnConcatenatingTransformer> CreatePipeline(MLContext mlContext)
         {
-            using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Write))
+            return mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
+            .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
+            .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
+            .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MacdHist", inputColumnName: nameof(CoinData.MacdHist)))
+            .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Rsi", inputColumnName: nameof(CoinData.Rsi)))
+            .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "Rsi", "MacdHist"));
+        }
+        private static void SaveModelAsFile(MLContext mlContext, ITransformer model, string sourcePath, string modelType)
+        {
+            var fileName = Path.GetFileName(sourcePath);
+            var symbol = fileName.Substring(0, fileName.IndexOf("-"));
+            var modelPath = string.Format("{0}\\MODEL\\{1}-{2}.zip", Environment.CurrentDirectory, symbol, modelType);
+
+            using (var fileStream = new FileStream(modelPath, FileMode.Create, FileAccess.Write, FileShare.Write))
                 mlContext.Model.Save(model, fileStream);
+        }
+
+        private static ITransformer LoadModelFromFile(MLContext mlContext, string sourcePath, string modelType)
+        {
+            var fileName = Path.GetFileName(sourcePath);
+            var symbol = fileName.Substring(0, fileName.IndexOf("-"));
+            var modelPath = string.Format("{0}\\MODEL\\{1}-{2}.zip", Environment.CurrentDirectory, symbol, modelType);
+
+            using (var stream = new FileStream(modelPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return mlContext.Model.Load(stream);
+            }
         }
 
         #endregion
