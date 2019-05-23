@@ -18,7 +18,8 @@ namespace cryptowatcherAI
         {
             Console.WriteLine("press 0 to create new csv from binance API");
             Console.WriteLine("press 1 to create csv from all binance coin for specified market");
-            Console.WriteLine("press 2 to create and save new model");
+            Console.WriteLine("press 2 to create and save all model");
+            Console.WriteLine("press 3 to create and save one model");
             var userEntry = Console.ReadLine();
 
             if (userEntry == "0")
@@ -44,7 +45,7 @@ namespace cryptowatcherAI
 
             if (userEntry == "2")
             {
-                Console.WriteLine("############ Create and save new model ###########");
+                Console.WriteLine("############ Create and save all model ###########");
                 Console.ReadLine();
 
                 //List all csv available
@@ -53,6 +54,30 @@ namespace cryptowatcherAI
                 foreach (var coinPath in modelPathList)
                 {
                     CreateModel(coinPath);
+                }
+
+                Console.WriteLine("Models completed, press any key to exit....");
+                Console.ReadLine();
+            }
+
+            if (userEntry == "3")
+            {
+                Console.WriteLine("############ Create and save one model ###########");
+                Console.WriteLine("Enter valide coin pair value");
+                var coin = Console.ReadLine();
+
+                //List all csv available
+                var rootFolder = Environment.CurrentDirectory + "/Csv/";
+                var modelPathList = Directory.GetFiles(rootFolder, "*", SearchOption.AllDirectories);
+
+                foreach (var coinPath in modelPathList)
+                {
+                    var fileName = Path.GetFileName(coinPath);
+                    var symbol = fileName.Substring(0, fileName.IndexOf("-"));
+                    if (symbol == coin)
+                    {
+                        CreateModel(coinPath);
+                    }
                 }
 
                 Console.WriteLine("Models completed, press any key to exit....");
@@ -116,7 +141,6 @@ namespace cryptowatcherAI
 
         private static void CreateModel(string sourcePath)
         {
-
             ITransformer model;
             MLContext mlContext = new MLContext();
 
@@ -129,46 +153,46 @@ namespace cryptowatcherAI
             //4: We save the model
             SaveModelAsFile(mlContext, model, sourcePath, "Fast Forest");
 
-            var pipeline2 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.FastTree()); ;
+            var pipeline2 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.FastTree());
             model = pipeline2.Fit(trainingDataView);
             SaveModelAsFile(mlContext, model, sourcePath, "Fast Tree");
 
-            var pipeline3 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.FastTreeTweedie()); ;
+            var pipeline3 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.FastTreeTweedie());
             model = pipeline3.Fit(trainingDataView);
             SaveModelAsFile(mlContext, model, sourcePath, "Fast Tree Tweedie");
 
-            var pipeline4 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.GeneralizedAdditiveModels()); ;
+            var pipeline4 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.GeneralizedAdditiveModels());
             model = pipeline4.Fit(trainingDataView);
             SaveModelAsFile(mlContext, model, sourcePath, "Additive Model");
 
             try
             {
-                var pipeline5 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.OnlineGradientDescent()); ;
+                var pipeline5 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.OnlineGradientDescent());
                 model = pipeline5.Fit(trainingDataView);
                 SaveModelAsFile(mlContext, model, sourcePath, "Gradient Descent");
             }
             catch (System.Exception)
             {
-                
+
             }
 
             var pipeline7 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.StochasticDualCoordinateAscent()); ;
             model = pipeline7.Fit(trainingDataView);
             SaveModelAsFile(mlContext, model, sourcePath, "Stochastic dual Coordinate");
 
-            //     // STEP 5: We load the model FOR DEBUGGING
-            //     ITransformer loadedModel;
-            //    loadedModel = LoadModelFromFile(mlContext, sourcePath, "Fast Forest");
+            // // STEP 5: We load the model FOR DEBUGGING
+            ITransformer loadedModel;
+            loadedModel = LoadModelFromFile(mlContext, sourcePath, "Fast Forest");
 
-            //     // FINAL STEP: we do a prediction based on the model generated privously
-            //     var predictionFunction = mlContext.Model.CreatePredictionEngine<CoinData, CoinPrediction>(loadedModel);
-            //     CoinPrediction prediction = predictionFunction.Predict(new CoinData
-            //     {
-            //         Volume = (float)83.825741,
-            //         Open = (float)4136.48,
-            //         Rsi = (float)51.72,
-            //         MacdHist = (float)-2.01
-            //     });
+            // FINAL STEP: we do a prediction based on the model generated privously
+            var predictionFunction = mlContext.Model.CreatePredictionEngine<CoinData, CoinPrediction>(loadedModel);
+            CoinPrediction prediction = predictionFunction.Predict(new CoinData
+            {
+                Volume = (float)83.825741,
+                Open = (float)4136.48,
+                Rsi = (float)51.72,
+                MacdHist = (float)-2.01
+            });
         }
 
         #region helper
@@ -176,10 +200,10 @@ namespace cryptowatcherAI
         private static EstimatorChain<ColumnConcatenatingTransformer> CreatePipeline(MLContext mlContext)
         {
             return mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
-            .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
-            .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
-            .Append(mlContext.Transforms.CopyColumns(outputColumnName: "MacdHist", inputColumnName: nameof(CoinData.MacdHist)))
-            .Append(mlContext.Transforms.CopyColumns(outputColumnName: "Rsi", inputColumnName: nameof(CoinData.Rsi)))
+            .Append(mlContext.Transforms.Normalize(outputColumnName: "Volume", inputColumnName: nameof(CoinData.Volume)))
+            .Append(mlContext.Transforms.Normalize(outputColumnName: "Open", inputColumnName: nameof(CoinData.Open)))
+            .Append(mlContext.Transforms.Normalize(outputColumnName: "MacdHist", inputColumnName: nameof(CoinData.MacdHist)))
+            .Append(mlContext.Transforms.Normalize(outputColumnName: "Rsi", inputColumnName: nameof(CoinData.Rsi)))
             .Append(mlContext.Transforms.Concatenate("Features", "Volume", "Open", "Rsi", "MacdHist"));
         }
         private static void SaveModelAsFile(MLContext mlContext, ITransformer model, string sourcePath, string modelType)
