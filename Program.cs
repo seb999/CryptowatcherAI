@@ -40,6 +40,7 @@ namespace cryptowatcherAI
                 Console.WriteLine("Enter valide coin pair value");
                 var coin = Console.ReadLine();
                 CreateCsv(coin);
+                Console.ReadLine();
             }
 
 
@@ -104,7 +105,7 @@ namespace cryptowatcherAI
             csv.AppendLine();
 
             //2-Actract data from Binance API and push to output
-            List<CoinTransfer> binanceData = BinanceMarket.GetCoin(symbol, "1h");
+            List<CoinTransfer> binanceData = BinanceMarket.GetCoin(symbol, "2h");
 
             foreach (var ticker in binanceData)
             {
@@ -129,15 +130,15 @@ namespace cryptowatcherAI
                 csv.AppendLine();
             }
 
-            //3 - Create output name
+            //3 - Create output file name
             string resultFileName = string.Format("{0}-TrainData.csv", symbol);
 
             //4 - save file to drive
-            File.WriteAllText(resultFileName, csv.ToString());
-
+            var resultFilePath =  string.Format("{0}/Csv/{1}", Environment.CurrentDirectory, resultFileName);
+            File.WriteAllText(resultFilePath, csv.ToString());
+           
             //3-save csv and print the file name
             Console.WriteLine(resultFileName);
-            Console.ReadLine();
         }
 
         private static void CreateModel(string sourcePath)

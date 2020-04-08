@@ -28,11 +28,11 @@ namespace cryptowatcherAI.Misc
             double startTime = 0;
             double endTime = 0;
 
-            //We take data 10 times 70 days (with interval 1h = 40 * 24 measure / j = 960 measures  )
-            for (int i = 17; i >= 1; i--)
+            //We take data 10 times 70 days (with interval 1h = 80 * 12 measure / j = 960 measures  )
+            for (int i = 10; i >= 1; i--)
             {
-                startTime = Math.Round(DateTime.UtcNow.AddDays(-40 * i).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
-                endTime = Math.Round(DateTime.UtcNow.AddDays(-40 * (i - 1)).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
+                startTime = Math.Round(DateTime.UtcNow.AddDays(-80 * i).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
+                endTime = Math.Round(DateTime.UtcNow.AddDays(-80 * (i - 1)).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
 
                 apiUrl = string.Format("https://api.binance.com/api/v1/klines?symbol={0}&interval={1}&limit=1000&startTime={2}&endTime={3}",
                     symbol,
