@@ -48,5 +48,7 @@ namespace cryptowatcherAI.Misc
             }
         }
 
+        
+
     }
 }
