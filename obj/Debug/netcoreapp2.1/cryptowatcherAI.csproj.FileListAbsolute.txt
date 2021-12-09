@@ -46,10 +46,11 @@ c:/Users/sdubos/_Github/dotnet/CryptowatcherAI/obj/Debug/netcoreapp2.1/cryptowat
 /Users/sebastien/_Git/Dotnet/CryptowatcherAI/bin/Debug/netcoreapp2.1/cryptowatcherAI.runtimeconfig.dev.json
 /Users/sebastien/_Git/Dotnet/CryptowatcherAI/bin/Debug/netcoreapp2.1/cryptowatcherAI.dll
 /Users/sebastien/_Git/Dotnet/CryptowatcherAI/bin/Debug/netcoreapp2.1/cryptowatcherAI.pdb
-/Users/sebastien/_Git/Dotnet/CryptowatcherAI/obj/Debug/netcoreapp2.1/cryptowatcherAI.csprojAssemblyReference.cache
 /Users/sebastien/_Git/Dotnet/CryptowatcherAI/obj/Debug/netcoreapp2.1/cryptowatcherAI.AssemblyInfoInputs.cache
 /Users/sebastien/_Git/Dotnet/CryptowatcherAI/obj/Debug/netcoreapp2.1/cryptowatcherAI.AssemblyInfo.cs
 /Users/sebastien/_Git/Dotnet/CryptowatcherAI/obj/Debug/netcoreapp2.1/cryptowatcherAI.csproj.CoreCompileInputs.cache
 /Users/sebastien/_Git/Dotnet/CryptowatcherAI/obj/Debug/netcoreapp2.1/cryptowatcherAI.dll
 /Users/sebastien/_Git/Dotnet/CryptowatcherAI/obj/Debug/netcoreapp2.1/cryptowatcherAI.pdb
 /Users/sebastien/_Git/Dotnet/CryptowatcherAI/obj/Debug/netcoreapp2.1/cryptowatcherAI.genruntimeconfig.cache
+/Users/sebastien/_Git/Dotnet/CryptowatcherAI/obj/Debug/netcoreapp2.1/cryptowatcherAI.csproj.AssemblyReference.cache
+/Users/sebastien/_Git/Dotnet/CryptowatcherAI/obj/Debug/netcoreapp2.1/cryptowatcherAI.GeneratedMSBuildEditorConfig.editorconfig

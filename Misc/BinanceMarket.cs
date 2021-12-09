@@ -29,19 +29,18 @@ namespace cryptowatcherAI.Misc
             double endTime = 0;
 
             //We take data 10 times 70 days (with interval 1h = 80 * 12 measure / j = 960 measures  )
-            for (int i = 10; i >= 1; i--)
+            for (int i = 180; i >= 1; i--)
             {
-                startTime = Math.Round(DateTime.UtcNow.AddDays(-80 * i).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
-                endTime = Math.Round(DateTime.UtcNow.AddDays(-80 * (i - 1)).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
+                startTime = Math.Round(DateTime.UtcNow.AddDays(-2 * i).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
+                endTime = Math.Round(DateTime.UtcNow.AddDays(-2 * (i - 1)).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
 
-                apiUrl = string.Format("https://api.binance.com/api/v1/klines?symbol={0}&interval={1}&limit=1000&startTime={2}&endTime={3}",
+                apiUrl = string.Format("https://api3.binance.com/api/v3/klines?symbol={0}&interval={1}&limit=1000&startTime={2}&endTime={3}",
                     symbol,
                     interval,
                     startTime,
                     endTime);
 
                 //1 - we load a set of data from binance
-                // payload = HttpHelper.GetApiData(new Uri(url));
                 List<List<double>> coinQuotation = HttpHelper.GetApiData<List<List<double>>>(new Uri(apiUrl));
 
                 //3 - We add each item to our final list (26 first doesn;t contain RSI neither MACD calulation)
@@ -49,37 +48,46 @@ namespace cryptowatcherAI.Misc
                 {
                     CoinTransfer newQuotation = new CoinTransfer()
                     {
-                        OpenTime = item[0],
-                        Open = item[1],
-                        High = item[2],
-                        Low = item[3],
-                        Close = item[4],
-                        Volume = item[5],
-                        CloseTime = item[6],
-                        QuoteAssetVolume = item[7],
-                        NumberOfTrades = item[8],
-                        BuyBaseAssetVolume = item[9],
-                        BuyQuoteAssetVolume = item[10],
-                        Ignore = item[11],
+                        t = item[0],
+                        o = item[1],
+                        h = item[2],
+                        l = item[3],
+                        c = item[4],
+                        v = item[5],
+                        T = item[6],
+                        q = item[7],
+                        n = item[8],
+                        V = item[9],
+                        Q = item[10],
+                        B = item[11],
                     };
                     quotationHistory.Add(newQuotation);
                 }
             }
 
-            //Calculate change from next day to current day
-            quotationHistory.Where((p, index) => CalculateFuturePrice(p, index, quotationHistory)).ToList();
-
             //Add RSI calculation to the list
             TradeIndicator.CalculateRsiList(14, ref quotationHistory);
             TradeIndicator.CalculateMacdList(ref quotationHistory);
+           // TradeIndicator.CalculateEMA50(ref quotationHistory);
 
-            return quotationHistory.Skip(26).ToList();
+            //Calculate change from next day to current day
+            quotationHistory.Where((p, index) => CalculateFuturePrice(p, index, quotationHistory)).ToList();
+
+            //we remove the first 50 line : cannot calculate rsi and EMA
+            return quotationHistory.SkipLast(5).Skip(50).ToList();
         }
 
         private static bool CalculateFuturePrice(CoinTransfer p, int index, List<CoinTransfer> quotationHistory)
         {
-            if (index == quotationHistory.Count - 1) return true;
-            p.FuturePrice = quotationHistory[index + 1].Close - p.Close;
+            if (index >= quotationHistory.Count - 5) return true;
+            double averageFuturPrice = 0; 
+            for(int i=1;i<=5;i++)
+            {
+                averageFuturPrice += quotationHistory[index + i].c;
+            }
+            averageFuturPrice = averageFuturPrice/5;
+            p.FuturePrice = averageFuturPrice - p.c;
+
             return true;
         }
     }
