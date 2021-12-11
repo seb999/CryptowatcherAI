@@ -15,9 +15,8 @@ namespace cryptowatcherAI.Misc
 
             //Get data from Binance API
             List<SymbolTransfer> coinList = HttpHelper.GetApiData<List<SymbolTransfer>>(apiUrl);
-
             coinList = coinList.Where(p => p.Symbol.Substring(p.Symbol.Length - baseMarket.ToString().Length) == baseMarket.ToString()).Select(p => p).ToList();
-
+            
             return coinList.Select(p => p.Symbol).ToList();
         }
 
@@ -28,8 +27,8 @@ namespace cryptowatcherAI.Misc
             double startTime = 0;
             double endTime = 0;
 
-            //We take data 10 times 70 days (with interval 1h = 80 * 12 measure / j = 960 measures  )
-            for (int i = 180; i >= 1; i--)
+            //1 measure by min = 480 measure by day so 1000 measure represent 2 days. 360 iteration represente 2 years
+            for (int i = 360; i >= 1; i--)
             {
                 startTime = Math.Round(DateTime.UtcNow.AddDays(-2 * i).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
                 endTime = Math.Round(DateTime.UtcNow.AddDays(-2 * (i - 1)).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;

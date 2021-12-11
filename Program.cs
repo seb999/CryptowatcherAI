@@ -28,10 +28,20 @@ namespace cryptowatcherAI
                 Console.WriteLine("############ Create csv for allcoin!!! ###########");
                 Console.WriteLine("Enter market : USDT or BNB or BTC ?");
                 var market = Console.ReadLine();
+                //Get existing csv list
+                var rootFolder = Environment.CurrentDirectory + "/Csv/";
+                var csvList = Directory.GetFiles(rootFolder, "*", SearchOption.AllDirectories);
+
                 List<string> symbolList = BinanceMarket.GetSymbolList(market);
                 foreach (var coinName in symbolList)
                 {
-                    CreateCsv(coinName);
+                    bool isCsvExisting = false;
+                    foreach (var csvPath in csvList)
+                    {
+                        if(Path.GetFileName(csvPath).IndexOf("-") < 0) continue;
+                        if(Path.GetFileName(csvPath).Substring(0,(Path.GetFileName(csvPath).IndexOf("-"))) == coinName) isCsvExisting = true;
+                    }
+                    if(!isCsvExisting) CreateCsv(coinName);
                 }
             }
 
@@ -40,8 +50,8 @@ namespace cryptowatcherAI
                 Console.WriteLine("############ Create csv ###########");
                 Console.WriteLine("Enter valide coin pair value: ex: BTCUSDT");
                 var coin = Console.ReadLine();
-                //CreateCsv(coin);
-                CreateCsv("BTCUSDT");
+                CreateCsv(coin);
+                //CreateCsv("BTCUSDT");
                 Console.ReadLine();
             }
 
@@ -170,9 +180,9 @@ namespace cryptowatcherAI
             model = pipeline2.Fit(baseTrainingDataView);
             SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "Gradient Descent");
 
-            var pipeline3 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.LbfgsPoissonRegression());
-            model = pipeline2.Fit(baseTrainingDataView);
-            SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "Poisson Regression");
+            // var pipeline3 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.LbfgsPoissonRegression());
+            // model = pipeline2.Fit(baseTrainingDataView);
+            // SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "Poisson Regression");
         }
 
         private static void TestModel()
