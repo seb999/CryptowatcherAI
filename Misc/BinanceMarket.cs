@@ -27,8 +27,8 @@ namespace cryptowatcherAI.Misc
             double startTime = 0;
             double endTime = 0;
 
-            //1 measure by min = 480 measure by day so 1000 measure represent 2 days. 360 iteration represente 2 years
-            for (int i = 360; i >= 1; i--)
+            //1 measure by min = 480 measure by day so 1000 measure represent 2 days. 360 iteration represente 2 years / 180 iterations is 1 y
+            for (int i = 200; i >= 1; i--)
             {
                 startTime = Math.Round(DateTime.UtcNow.AddDays(-2 * i).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
                 endTime = Math.Round(DateTime.UtcNow.AddDays(-2 * (i - 1)).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;

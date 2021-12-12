@@ -3963,28 +3963,30 @@
     ]
   },
   "packageFolders": {
-    "/Users/sebastien/.nuget/packages/": {},
-    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder": {}
+    "C:\\Users\\sdubos\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/sebastien/_Git/Dotnet/CryptowatcherAI/cryptowatcherAI.csproj",
+      "projectUniqueName": "C:\\Temp\\CryptowatcherAI\\cryptowatcherAI.csproj",
       "projectName": "cryptowatcherAI",
-      "projectPath": "/Users/sebastien/_Git/Dotnet/CryptowatcherAI/cryptowatcherAI.csproj",
-      "packagesPath": "/Users/sebastien/.nuget/packages/",
-      "outputPath": "/Users/sebastien/_Git/Dotnet/CryptowatcherAI/obj/",
+      "projectPath": "C:\\Temp\\CryptowatcherAI\\cryptowatcherAI.csproj",
+      "packagesPath": "C:\\Users\\sdubos\\.nuget\\packages\\",
+      "outputPath": "C:\\Temp\\CryptowatcherAI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "/Users/sebastien/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\sdubos\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.1"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -4028,7 +4030,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.403/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

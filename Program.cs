@@ -38,10 +38,10 @@ namespace cryptowatcherAI
                     bool isCsvExisting = false;
                     foreach (var csvPath in csvList)
                     {
-                        if(Path.GetFileName(csvPath).IndexOf("-") < 0) continue;
-                        if(Path.GetFileName(csvPath).Substring(0,(Path.GetFileName(csvPath).IndexOf("-"))) == coinName) isCsvExisting = true;
+                        if (Path.GetFileName(csvPath).IndexOf("-") < 0) continue;
+                        if (Path.GetFileName(csvPath).Substring(0, (Path.GetFileName(csvPath).IndexOf("-"))) == coinName) isCsvExisting = true;
                     }
-                    if(!isCsvExisting) CreateCsv(coinName);
+                    if (!isCsvExisting) CreateCsv(coinName);
                 }
             }
 
@@ -59,15 +59,23 @@ namespace cryptowatcherAI
             if (userEntry == "2")
             {
                 Console.WriteLine("############ Create and save all model ###########");
-                Console.ReadLine();
 
                 //List all csv available
-                var rootFolder = Environment.CurrentDirectory + "/Csv/";
-                var modelPathList = Directory.GetFiles(rootFolder, "*", SearchOption.AllDirectories);
-                foreach (var coinPath in modelPathList)
+                var csvFolder = Environment.CurrentDirectory + "/CSV/";  
+                var csvList = Directory.GetFiles(csvFolder, "*", SearchOption.AllDirectories);
+
+                var modelFolder = Environment.CurrentDirectory + "/MODEL/";
+                var modelList = Directory.GetFiles(modelFolder, "*", SearchOption.AllDirectories);
+
+                foreach (var csvItem in csvList)
                 {
-                    if (Path.GetFileName(coinPath).IndexOf("-") < 0) continue;
-                    CreateModel(coinPath);
+                    bool isCsvExisting = false;
+                    foreach (var modelItem in modelList)
+                    {
+                        if (Path.GetFileName(modelItem).Substring(0, (Path.GetFileName(modelItem).IndexOf("-"))) ==
+                            Path.GetFileName(csvItem).Substring(0, (Path.GetFileName(csvItem).IndexOf("-")))) isCsvExisting = true;
+                    }
+                    if (!isCsvExisting) CreateModel(csvItem);
                 }
 
                 Console.WriteLine("Models completed, press any key to exit....");
@@ -163,26 +171,36 @@ namespace cryptowatcherAI
 
         private static void CreateModel(string sourcePath)
         {
-            ITransformer model;
-            MLContext mlContext = new MLContext(seed: 0);
+            try
+            {
+                ITransformer model;
+                MLContext mlContext = new MLContext(seed: 0);
 
-            //1 - Load data from csv
-            IDataView baseTrainingDataView = mlContext.Data.LoadFromTextFile<CoinData>(path: sourcePath, hasHeader: true, separatorChar: ',');
+                //1 - Load data from csv
+                IDataView baseTrainingDataView = mlContext.Data.LoadFromTextFile<CoinData>(path: sourcePath, hasHeader: true, separatorChar: ',');
 
-            //2 - Create pipeline
-            var pipeline1 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.Sdca()); ;
-            //3 - Train your model based on the data set
-            model = pipeline1.Fit(baseTrainingDataView);
-            //4: We save the model
-            SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "Sdca");
+                //2 - Create pipeline
+                var pipeline1 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.Sdca()); ;
+                model = pipeline1.Fit(baseTrainingDataView);
+                SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "Sdca");
 
-            var pipeline2 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.OnlineGradientDescent());
-            model = pipeline2.Fit(baseTrainingDataView);
-            SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "Gradient Descent");
+                var pipeline2 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.OnlineGradientDescent());
+                model = pipeline2.Fit(baseTrainingDataView);
+                SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "Gradient Descent");
 
-            // var pipeline3 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.LbfgsPoissonRegression());
-            // model = pipeline2.Fit(baseTrainingDataView);
-            // SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "Poisson Regression");
+                // var pipeline3 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.LbfgsPoissonRegression());
+                // model = pipeline2.Fit(baseTrainingDataView);
+                // SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "Poisson Regression");
+            }
+            catch (System.Exception)
+            {
+                //throw;
+            }
+            finally
+            {
+                //;
+            }
+
         }
 
         private static void TestModel()
@@ -202,25 +220,25 @@ namespace cryptowatcherAI
             foreach (var modelPath in modelPathList)
             {
                 if (Path.GetFileName(modelPath).IndexOf("-") < 0) continue;
-                
+
                 ITransformer trainedModel = mlContext.Model.Load(modelPath, out var modelInputSchema);
 
-                 // Create prediction engine related to the loaded trained model
+                // Create prediction engine related to the loaded trained model
                 var predEngine = mlContext.Model.CreatePredictionEngine<CoinData, CoinPrediction>(trainedModel);
 
                 //Score
                 var resultprediction = predEngine.Predict(testData);
             }
 
-         
 
-         
+
+
 
             // // STEP 5: We load the model FOR DEBUGGING
-           
 
-           
-           
+
+
+
             // loadedModel = LoadModelFromFile(mlContext, sourcePath, "Fast Forest");
 
             // //FINAL STEP: we do a prediction based on the model generated privously
