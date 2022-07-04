@@ -9,7 +9,7 @@
       "cryptowatcherAI/1.0.0": {
         "dependencies": {
           "Cryptowatcher.TA-LIb-Core": "1.0.0",
-          "Microsoft.ML": "1.7.0"
+          "Microsoft.ML": "1.7.1"
         },
         "runtime": {
           "cryptowatcherAI.dll": {}
@@ -43,10 +43,10 @@
           "System.Threading": "4.3.0"
         }
       },
-      "Microsoft.ML/1.7.0": {
+      "Microsoft.ML/1.7.1": {
         "dependencies": {
-          "Microsoft.ML.CpuMath": "1.7.0",
-          "Microsoft.ML.DataView": "1.7.0",
+          "Microsoft.ML.CpuMath": "1.7.1",
+          "Microsoft.ML.DataView": "1.7.1",
           "Newtonsoft.Json": "10.0.3",
           "System.CodeDom": "4.4.0",
           "System.Collections.Immutable": "1.5.0",
@@ -57,31 +57,31 @@
         "runtime": {
           "lib/netstandard2.0/Microsoft.ML.Core.dll": {
             "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.700.21.55904"
+            "fileVersion": "1.700.122.15804"
           },
           "lib/netstandard2.0/Microsoft.ML.Data.dll": {
             "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.700.21.55904"
+            "fileVersion": "1.700.122.15804"
           },
           "lib/netstandard2.0/Microsoft.ML.KMeansClustering.dll": {
             "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.700.21.55904"
+            "fileVersion": "1.700.122.15804"
           },
           "lib/netstandard2.0/Microsoft.ML.PCA.dll": {
             "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.700.21.55904"
+            "fileVersion": "1.700.122.15804"
           },
           "lib/netstandard2.0/Microsoft.ML.StandardTrainers.dll": {
             "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.700.21.55904"
+            "fileVersion": "1.700.122.15804"
           },
           "lib/netstandard2.0/Microsoft.ML.Transforms.dll": {
             "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.700.21.55904"
+            "fileVersion": "1.700.122.15804"
           },
           "lib/netstandard2.0/Microsoft.ML.dll": {
             "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.700.21.55904"
+            "fileVersion": "1.700.122.15804"
           }
         },
         "runtimeTargets": {
@@ -113,23 +113,23 @@
           "runtimes/win-x64/native/LdaNative.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.1900.21.55904"
+            "fileVersion": "0.1900.122.15804"
           },
           "runtimes/win-x86/native/LdaNative.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.1900.21.55904"
+            "fileVersion": "0.1900.122.15804"
           }
         }
       },
-      "Microsoft.ML.CpuMath/1.7.0": {
+      "Microsoft.ML.CpuMath/1.7.1": {
         "dependencies": {
           "System.Memory": "4.5.3"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.ML.CpuMath.dll": {
             "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.700.21.55904"
+            "fileVersion": "1.700.122.15804"
           }
         },
         "runtimeTargets": {
@@ -146,16 +146,16 @@
           "runtimes/win-x64/nativeassets/netstandard2.0/CpuMathNative.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.1900.21.55904"
+            "fileVersion": "0.1900.122.15804"
           },
           "runtimes/win-x86/nativeassets/netstandard2.0/CpuMathNative.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.1900.21.55904"
+            "fileVersion": "0.1900.122.15804"
           }
         }
       },
-      "Microsoft.ML.DataView/1.7.0": {
+      "Microsoft.ML.DataView/1.7.1": {
         "dependencies": {
           "System.Collections.Immutable": "1.5.0",
           "System.Memory": "4.5.3"
@@ -163,7 +163,7 @@
         "runtime": {
           "lib/netstandard2.0/Microsoft.ML.DataView.dll": {
             "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.700.21.55904"
+            "fileVersion": "1.700.122.15804"
           }
         }
       },
@@ -533,26 +533,26 @@
       "path": "microsoft.csharp/4.3.0",
       "hashPath": "microsoft.csharp.4.3.0.nupkg.sha512"
     },
-    "Microsoft.ML/1.7.0": {
+    "Microsoft.ML/1.7.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-VWNzTz3Owt7qBxsLD1cxjx3fN7YuyVKu26OIwKIF83r+3Fm8B/OkiXugP8rjIYg0c3+KK8G3ks96eiOfdzT26g==",
-      "path": "microsoft.ml/1.7.0",
-      "hashPath": "microsoft.ml.1.7.0.nupkg.sha512"
+      "sha512": "sha512-t33nUR6A8VwYMInbsEM5eSGJaHWdScikAX7mER0Yh0H4e85W7FRw0KBlCixHHuivSF2y7ez+2IGpfb2PUgVVow==",
+      "path": "microsoft.ml/1.7.1",
+      "hashPath": "microsoft.ml.1.7.1.nupkg.sha512"
     },
-    "Microsoft.ML.CpuMath/1.7.0": {
+    "Microsoft.ML.CpuMath/1.7.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-ibot+EJKOG21DE47YQCy8djLpSJ31hgbwkJPkG2a5KSieb2eEGySCzzMLBAcP2jR5vd8+5Gss3FuGYvfY9Bncw==",
-      "path": "microsoft.ml.cpumath/1.7.0",
-      "hashPath": "microsoft.ml.cpumath.1.7.0.nupkg.sha512"
+      "sha512": "sha512-kkUm/o1pBFAtRI+5LRwtJpvXhf8l8YyeQ8OYZNkTGrn5exn5C3YrwrRRX3fDz7yPPKA38XY4EPy2WVltArO0aw==",
+      "path": "microsoft.ml.cpumath/1.7.1",
+      "hashPath": "microsoft.ml.cpumath.1.7.1.nupkg.sha512"
     },
-    "Microsoft.ML.DataView/1.7.0": {
+    "Microsoft.ML.DataView/1.7.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-pMfpOsoRcexVnsNqwRqcqRsdfzw2dN3kBu3QzmZ3YqPuiZLLoDHaB3ZYEAvnIUEhpnIe4wVD4UnUWvatzoVWcQ==",
-      "path": "microsoft.ml.dataview/1.7.0",
-      "hashPath": "microsoft.ml.dataview.1.7.0.nupkg.sha512"
+      "sha512": "sha512-j7BwSzNJUjxI8aSkzv4yCi0/kem1mYFVWiuLQcG0vcMEs3BNqvkunt+qdRmUMYuPY7/9AK22a70laAxjcJ2GGA==",
+      "path": "microsoft.ml.dataview/1.7.1",
+      "hashPath": "microsoft.ml.dataview.1.7.1.nupkg.sha512"
     },
     "Newtonsoft.Json/10.0.3": {
       "type": "package",

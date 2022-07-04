@@ -6,7 +6,8 @@ using TicTacTec.TA.Library;
 
 namespace cryptowatcherAI.Misc
 {
-    public static class TradeIndicator{
+    public static class TradeIndicator
+    {
 
         public static void CalculateRsiList(int period, ref List<CoinTransfer> quotationList)
         {
@@ -19,13 +20,13 @@ namespace cryptowatcherAI.Misc
 
             if (returnCode == Core.RetCode.Success && outNBElements > 0)
             {
-                for (int i = 0; i <= outNBElements-1; i++)
+                for (int i = 0; i <= outNBElements - 1; i++)
                 {
-                    quotationList[i+beginIndex].Rsi = rsiValues[i];
+                    quotationList[i + beginIndex].Rsi = rsiValues[i];
                 }
             }
         }
-        
+
         public static void CalculateMacdList(ref List<CoinTransfer> quotationList)
         {
             var data = quotationList.Select(p => p.c).ToArray();
@@ -35,16 +36,33 @@ namespace cryptowatcherAI.Misc
             double[] outMACDSignal = new double[data.Length];
             double[] outMACDHist = new double[data.Length];
 
-            var status = Core.MacdFix(0, data.Length - 1, data, 2, out beginIndex, out outNBElements, outMACD, outMACDSignal, outMACDHist);
+            var status = Core.Macd(0, data.Length - 1, data, 12, 26, 9, out beginIndex, out outNBElements, outMACD, outMACDSignal, outMACDHist);
 
             if (status == Core.RetCode.Success && outNBElements > 0)
             {
-                for (int i = 0; i < outNBElements; i++)
+                var macdMax = outMACD.Max();
+                var macdMin = outMACD.Min();
+                var macdSignMax = outMACDSignal.Max();
+                var macdSignMin = outMACDSignal.Min();
+
+                //we normalise the MACD in order to use different coins with same data
+                for (int i = 0; i < quotationList.Count - 33; i++)
                 {
-                    quotationList[i+beginIndex].Macd = outMACD[i];
-                    quotationList[i+beginIndex].MacdHist = outMACDHist[i];
-                    quotationList[i+beginIndex].MacdSign = outMACDSignal[i];
-                }                 
+                    quotationList[i + 33].Macd =  ((outMACD[i] - macdMin) / (macdMax- macdMin))*100;
+                    quotationList[i + 33].MacdSign =  ((outMACDSignal[i] - macdSignMin) / (macdSignMax - macdSignMin))*100;
+                    quotationList[i + 33].MacdHistN0 =  quotationList[i + 33].Macd - quotationList[i + 33].MacdSign;
+                    // quotationList[i + 33].Macd = outMACD[i];
+                    // quotationList[i + 33].MacdHist = outMACDHist[i];
+                    // quotationList[i + 33].MacdSign = outMACDSignal[i];
+                }
+
+                //we stick N-3, N-2, N-1 MACDHist to each item
+                for(int i=3;i<quotationList.Count;i++)
+                {
+                     quotationList[i].MacdHistN1 = quotationList[i-1].MacdHistN0;
+                     quotationList[i].MacdHistN2 = quotationList[i-2].MacdHistN0;
+                     quotationList[i].MacdHistN3 = quotationList[i-3].MacdHistN0;
+                }
             }
         }
 

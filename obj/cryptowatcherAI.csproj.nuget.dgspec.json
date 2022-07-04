@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Temp\\CryptowatcherAI\\cryptowatcherAI.csproj": {}
+    "C:\\_Git\\Dotnet\\CryptowatcherAI\\cryptowatcherAI.csproj": {}
   },
   "projects": {
-    "C:\\Temp\\CryptowatcherAI\\cryptowatcherAI.csproj": {
+    "C:\\_Git\\Dotnet\\CryptowatcherAI\\cryptowatcherAI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Temp\\CryptowatcherAI\\cryptowatcherAI.csproj",
+        "projectUniqueName": "C:\\_Git\\Dotnet\\CryptowatcherAI\\cryptowatcherAI.csproj",
         "projectName": "cryptowatcherAI",
-        "projectPath": "C:\\Temp\\CryptowatcherAI\\cryptowatcherAI.csproj",
+        "projectPath": "C:\\_Git\\Dotnet\\CryptowatcherAI\\cryptowatcherAI.csproj",
         "packagesPath": "C:\\Users\\sdubos\\.nuget\\packages\\",
-        "outputPath": "C:\\Temp\\CryptowatcherAI\\obj\\",
+        "outputPath": "C:\\_Git\\Dotnet\\CryptowatcherAI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -49,7 +49,7 @@
             },
             "Microsoft.ML": {
               "target": "Package",
-              "version": "[1.7.0, )"
+              "version": "[1.7.1, )"
             },
             "Microsoft.NETCore.App": {
               "suppressParent": "All",
@@ -68,7 +68,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }

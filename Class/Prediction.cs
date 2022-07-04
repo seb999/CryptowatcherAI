@@ -6,24 +6,32 @@ namespace CryptowatcherAI.Class
     {
         public class CoinData
         {
-
-            [LoadColumn(5)]
-            public float v { get; set; }
-
-            [LoadColumn(12)]
+            [LoadColumn(13)]
             public float Rsi { get; set; }
 
-            [LoadColumn(15)]
-            public float MacdHist { get; set; }
-            
+            [LoadColumn(16)]
+            public float MacdHistN3 { get; set; }
+
             [LoadColumn(17)]
-            public float FuturePrice { get; set; }
+            public float MacdHistN2 { get; set; }
+
+            [LoadColumn(18)]
+            public float MacdHistN1 { get; set; }
+
+            [LoadColumn(19)]
+            public float MacdHistN0 { get; set; }
+
+            [LoadColumn(20)]
+            public bool FuturePrice { get; set; }
         }
 
         public class CoinPrediction
         {
-            [ColumnName("Score")]
-            public float FuturePrice { get; set; }
+            [ColumnName("PredictedLabel")]
+            public bool Prediction { get; set; }
+            
+            public float Probability;
+            public float Score;
         }
 
     }

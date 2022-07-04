@@ -66,3 +66,16 @@ C:\Temp\CryptowatcherAI\obj\Debug\netcoreapp2.1\cryptowatcherAI.csproj.CoreCompi
 C:\Temp\CryptowatcherAI\obj\Debug\netcoreapp2.1\cryptowatcherAI.dll
 C:\Temp\CryptowatcherAI\obj\Debug\netcoreapp2.1\cryptowatcherAI.pdb
 C:\Temp\CryptowatcherAI\obj\Debug\netcoreapp2.1\cryptowatcherAI.genruntimeconfig.cache
+C:\_Git\Dotnet\CryptowatcherAI\bin\Debug\netcoreapp2.1\cryptowatcherAI.deps.json
+C:\_Git\Dotnet\CryptowatcherAI\bin\Debug\netcoreapp2.1\cryptowatcherAI.runtimeconfig.json
+C:\_Git\Dotnet\CryptowatcherAI\bin\Debug\netcoreapp2.1\cryptowatcherAI.runtimeconfig.dev.json
+C:\_Git\Dotnet\CryptowatcherAI\bin\Debug\netcoreapp2.1\cryptowatcherAI.dll
+C:\_Git\Dotnet\CryptowatcherAI\bin\Debug\netcoreapp2.1\cryptowatcherAI.pdb
+C:\_Git\Dotnet\CryptowatcherAI\obj\Debug\netcoreapp2.1\cryptowatcherAI.csproj.AssemblyReference.cache
+C:\_Git\Dotnet\CryptowatcherAI\obj\Debug\netcoreapp2.1\cryptowatcherAI.GeneratedMSBuildEditorConfig.editorconfig
+C:\_Git\Dotnet\CryptowatcherAI\obj\Debug\netcoreapp2.1\cryptowatcherAI.AssemblyInfoInputs.cache
+C:\_Git\Dotnet\CryptowatcherAI\obj\Debug\netcoreapp2.1\cryptowatcherAI.AssemblyInfo.cs
+C:\_Git\Dotnet\CryptowatcherAI\obj\Debug\netcoreapp2.1\cryptowatcherAI.csproj.CoreCompileInputs.cache
+C:\_Git\Dotnet\CryptowatcherAI\obj\Debug\netcoreapp2.1\cryptowatcherAI.dll
+C:\_Git\Dotnet\CryptowatcherAI\obj\Debug\netcoreapp2.1\cryptowatcherAI.pdb
+C:\_Git\Dotnet\CryptowatcherAI\obj\Debug\netcoreapp2.1\cryptowatcherAI.genruntimeconfig.cache

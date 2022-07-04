@@ -27,13 +27,14 @@ namespace cryptowatcherAI.Misc
             double startTime = 0;
             double endTime = 0;
 
-            //1 measure by min = 480 measure by day so 1000 measure represent 2 days. 360 iteration represente 2 years / 180 iterations is 1 y
-            for (int i = 200; i >= 1; i--)
+            //1 interval = 15min, so 960 measure represent 10 days. 35 iteration represente 1 years. We want 5 years so 35x5 = 175 
+            for (int i = 175; i >= 1; i--)
             {
-                startTime = Math.Round(DateTime.UtcNow.AddDays(-2 * i).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
-                endTime = Math.Round(DateTime.UtcNow.AddDays(-2 * (i - 1)).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
+                startTime = Math.Round(DateTime.UtcNow.AddDays(-10 * i).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
+                endTime = Math.Round(DateTime.UtcNow.AddDays(-10 * (i - 1)).Subtract(new DateTime(1970, 1, 1)).TotalSeconds) * 1000;
 
-                apiUrl = string.Format("https://api3.binance.com/api/v3/klines?symbol={0}&interval={1}&limit=1000&startTime={2}&endTime={3}",
+                Console.WriteLine(startTime + "/" + endTime);
+                apiUrl = string.Format("https://api3.binance.com/api/v3/klines?symbol={0}&interval={1}&limit=960&startTime={2}&endTime={3}",
                     symbol,
                     interval,
                     startTime,
@@ -78,14 +79,14 @@ namespace cryptowatcherAI.Misc
 
         private static bool CalculateFuturePrice(CoinTransfer p, int index, List<CoinTransfer> quotationHistory)
         {
-            if (index >= quotationHistory.Count - 5) return true;
-            double averageFuturPrice = 0; 
-            for(int i=1;i<=5;i++)
+            if(index<1) return true;
+            if(p.c - quotationHistory[index-1].c  > 0)
             {
-                averageFuturPrice += quotationHistory[index + i].c;
+                p.FuturePrice = 1;
             }
-            averageFuturPrice = averageFuturPrice/5;
-            p.FuturePrice = averageFuturPrice - p.c;
+            else{
+                p.FuturePrice = 0;
+            }
 
             return true;
         }

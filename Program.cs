@@ -50,8 +50,8 @@ namespace cryptowatcherAI
                 Console.WriteLine("############ Create csv ###########");
                 Console.WriteLine("Enter valide coin pair value: ex: BTCUSDT");
                 var coin = Console.ReadLine();
-                CreateCsv(coin);
-                //CreateCsv("BTCUSDT");
+                //CreateCsv(coin);
+                CreateCsv("BTCUSDT");
                 Console.ReadLine();
             }
 
@@ -61,7 +61,7 @@ namespace cryptowatcherAI
                 Console.WriteLine("############ Create and save all model ###########");
 
                 //List all csv available
-                var csvFolder = Environment.CurrentDirectory + "/CSV/";  
+                var csvFolder = Environment.CurrentDirectory + "/CSV/";
                 var csvList = Directory.GetFiles(csvFolder, "*", SearchOption.AllDirectories);
 
                 var modelFolder = Environment.CurrentDirectory + "/MODEL/";
@@ -132,7 +132,7 @@ namespace cryptowatcherAI
             csv.AppendLine();
 
             //2-Actract data from Binance API and push to output
-            List<CoinTransfer> binanceData = BinanceMarket.GetCoin(symbol, "3m");
+            List<CoinTransfer> binanceData = BinanceMarket.GetCoin(symbol, "1h");
 
             foreach (var ticker in binanceData)
             {
@@ -148,11 +148,14 @@ namespace cryptowatcherAI
                 ticker.V.ToString().Replace(",", ".") + "," +
                 ticker.Q.ToString().Replace(",", ".") + "," +
                 ticker.B.ToString().Replace(",", ".") + "," +
+                ticker.Ema.ToString().Replace(",", ".") + "," +
                 ticker.Rsi.ToString().Replace(",", ".") + "," +
                 ticker.Macd.ToString().Replace(",", ".") + "," +
                 ticker.MacdSign.ToString().Replace(",", ".") + "," +
-                ticker.MacdHist.ToString().Replace(",", ".") + "," +
-                ticker.Ema.ToString().Replace(",", ".") + "," +
+                ticker.MacdHistN3.ToString().Replace(",", ".") + "," +
+                ticker.MacdHistN2.ToString().Replace(",", ".") + "," +
+                ticker.MacdHistN1.ToString().Replace(",", ".") + "," +
+                ticker.MacdHistN0.ToString().Replace(",", ".") + "," +
                 ticker.FuturePrice.ToString().Replace(",", "."));
 
                 csv.AppendLine();
@@ -180,21 +183,21 @@ namespace cryptowatcherAI
                 IDataView baseTrainingDataView = mlContext.Data.LoadFromTextFile<CoinData>(path: sourcePath, hasHeader: true, separatorChar: ',');
 
                 //2 - Create pipeline
-                var pipeline1 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.Sdca()); ;
+                var pipeline1 = CreatePipeline(mlContext).Append(mlContext.BinaryClassification.Trainers.LbfgsLogisticRegression()); ;
                 model = pipeline1.Fit(baseTrainingDataView);
-                SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "Sdca");
+                SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "lbfgs");
 
-                var pipeline2 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.OnlineGradientDescent());
+                var pipeline2 = CreatePipeline(mlContext).Append(mlContext.BinaryClassification.Trainers.SdcaLogisticRegression());
                 model = pipeline2.Fit(baseTrainingDataView);
-                SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "Gradient Descent");
+                SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "sda");
 
-                // var pipeline3 = CreatePipeline(mlContext).Append(mlContext.Regression.Trainers.LbfgsPoissonRegression());
+                // var pipeline3 = CreatePipeline(mlContext).Append(mlContext.BinaryClassification.Trainers.LdSvm());
                 // model = pipeline2.Fit(baseTrainingDataView);
-                // SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "Poisson Regression");
+                // SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "LdSvm");
             }
-            catch (System.Exception)
+            catch (System.Exception e)
             {
-                //throw;
+               Console.WriteLine(e);
             }
             finally
             {
@@ -207,9 +210,12 @@ namespace cryptowatcherAI
         {
             CoinData testData = new CoinData
             {
-                v = (float)83.825741,
-                Rsi = (float)85.72,
-                MacdHist = (float)3.01,
+                // v = (float)83.825741,
+                Rsi = (float)60.89498,
+                MacdHistN3 = (float)-0.46286118,
+                MacdHistN2 = (float)-8.640091,
+                MacdHistN1 = (float)-13.21102,
+                MacdHistN0 = (float)-16.47304,
             };
 
             ITransformer model;
@@ -229,10 +235,6 @@ namespace cryptowatcherAI
                 //Score
                 var resultprediction = predEngine.Predict(testData);
             }
-
-
-
-
 
             // // STEP 5: We load the model FOR DEBUGGING
 
@@ -258,10 +260,18 @@ namespace cryptowatcherAI
         private static EstimatorChain<ColumnConcatenatingTransformer> CreatePipeline(MLContext mlContext)
         {
             return mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(CoinData.FuturePrice)) //the output with LABEL as name
-            .Append(mlContext.Transforms.NormalizeMeanVariance(outputColumnName: nameof(CoinData.v)))
+
             .Append(mlContext.Transforms.NormalizeMeanVariance(outputColumnName: nameof(CoinData.Rsi)))
-            .Append(mlContext.Transforms.NormalizeMeanVariance(outputColumnName: nameof(CoinData.MacdHist)))
-            .Append(mlContext.Transforms.Concatenate("Features", nameof(CoinData.v), nameof(CoinData.Rsi), nameof(CoinData.MacdHist)));
+            .Append(mlContext.Transforms.NormalizeMeanVariance(outputColumnName: nameof(CoinData.MacdHistN3)))
+            .Append(mlContext.Transforms.NormalizeMeanVariance(outputColumnName: nameof(CoinData.MacdHistN2)))
+            .Append(mlContext.Transforms.NormalizeMeanVariance(outputColumnName: nameof(CoinData.MacdHistN1)))
+            .Append(mlContext.Transforms.NormalizeMeanVariance(outputColumnName: nameof(CoinData.MacdHistN0)))
+            .Append(mlContext.Transforms.Concatenate("Features",
+                                        nameof(CoinData.Rsi), 
+                                        nameof(CoinData.MacdHistN3), 
+                                        nameof(CoinData.MacdHistN2), 
+                                        nameof(CoinData.MacdHistN1), 
+                                        nameof(CoinData.MacdHistN0)));
         }
         private static void SaveModelAsFile(MLContext mlContext, ITransformer model, string sourcePath, IDataView trainingDataView, string modelType)
         {
