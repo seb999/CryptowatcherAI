@@ -132,7 +132,7 @@ namespace cryptowatcherAI
             csv.AppendLine();
 
             //2-Actract data from Binance API and push to output
-            List<CoinTransfer> binanceData = BinanceMarket.GetCoin(symbol, "1h");
+            List<CoinTransfer> binanceData = BinanceMarket.GetCoin(symbol, "15m");
 
             foreach (var ticker in binanceData)
             {
@@ -191,9 +191,9 @@ namespace cryptowatcherAI
                 model = pipeline2.Fit(baseTrainingDataView);
                 SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "sda");
 
-                // var pipeline3 = CreatePipeline(mlContext).Append(mlContext.BinaryClassification.Trainers.LdSvm());
-                // model = pipeline2.Fit(baseTrainingDataView);
-                // SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "LdSvm");
+                var pipeline3 = CreatePipeline(mlContext).Append(mlContext.BinaryClassification.Trainers.LdSvm());
+                model = pipeline3.Fit(baseTrainingDataView);
+                SaveModelAsFile(mlContext, model, sourcePath, baseTrainingDataView, "LdSvm");
             }
             catch (System.Exception e)
             {
